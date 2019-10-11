@@ -1,54 +1,58 @@
-package threeLayer.VO;
+package threeLayer.DAO;
 
-public class userVO {
-    private int _idUser;
-    private String _firstname;
-    private String _lastname;
-    private String _email;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
-    public userVO(){};
-    public userVO(int _idUser,String _firstname,String _lastname,String _email)
+public class dbConnection {
+    private Connection conn;
+    public dbConnection()
     {
-        this._idUser=_idUser;
-        this._firstname = _firstname;
-        this._lastname = _lastname;
-        this._email = _email;
+        conn=getLink.getLink();
+    }
+    // SELECT Query
+    public ResultSet executeSelectQuery(String SQL, String []par)
+    {
+        ResultSet resultSet=null;
+        try {
+            PreparedStatement preparedStatement = conn.prepareStatement(SQL);
+            int len=par.length;
+            //设置参数
+            for(int i=0;i<len;i++)
+            {
+                preparedStatement.setString(i+1,par[i]);
+            }
+            resultSet=preparedStatement.executeQuery();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return resultSet;
+    }
+    //Update
+    public boolean executeUpdateQuery(String sql,String []par)
+    {
+        try {
+
+            PreparedStatement preparedStatement=conn.prepareStatement(sql);
+            int len=par.length;
+            //设置参数
+            for(int i=0;i<len;i++)
+            {
+                preparedStatement.setString(i+1,par[i]);
+            }
+            int flag=preparedStatement.executeUpdate();
+            if(flag==0) {
+                return false;
+            }
+            return true;
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public int get_idUser() {
-        return _idUser;
-    }
 
-    public void set_idUser(int _idUser) {
-        this._idUser = _idUser;
-    }
-
-    public String get_firstname() {
-        return _firstname;
-    }
-
-    public void set_firstname(String _firstname) {
-        this._firstname = _firstname;
-    }
-
-    public String get_lastname() {
-        return _lastname;
-    }
-
-    public void set_lastname(String _lastname) {
-        this._lastname = _lastname;
-    }
-
-    public String get_email() {
-        return _email;
-    }
-
-    public void set_email(String _email) {
-        this._email = _email;
-    }
-
-    /// <constructor>
-    /// Constructor UserVO
-    /// </constructor>
-
- }
+}
